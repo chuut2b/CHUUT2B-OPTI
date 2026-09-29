@@ -11,7 +11,14 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-      - run: dotnet publish CHUUT2B_OPTI_projet/CHUUT2B_OPTI/CHUUT2B_OPTI.csproj -c Release -o publish
+      - name: Extraire le projet
+        run: |
+          $zip = Get-ChildItem -Path . -Filter *.zip | Select-Object -First 1
+          Expand-Archive -Path $zip.FullName -DestinationPath src -Force
+      - name: Compiler
+        run: |
+          $proj = Get-ChildItem -Path src -Recurse -Filter CHUUT2B_OPTI.csproj | Select-Object -First 1
+          dotnet publish $proj.FullName -c Release -o publish
       - uses: actions/upload-artifact@v4
         with:
           name: CHUUT2B_OPTI
